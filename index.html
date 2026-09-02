@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zahara Natural Hair Palm Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        .font-cursive {
+            font-family: 'Great Vibes', cursive;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f8f5;
+        }
+    </style>
+</head>
+<body class="text-gray-800" x-data="storeData()">
+
+    <div class="fixed bottom-4 right-4 z-50">
+        <button @click="toggleAdmin()" 
+                class="bg-emerald-800 hover:bg-emerald-900 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </button>
+    </div>
+
+    <div x-show="showAuthModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" x-cloak>
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
+            <h3 class="text-xl font-bold text-emerald-900 mb-2">Owner Access</h3>
+            <p class="text-sm text-gray-600 mb-4">Enter passcode to unlock price & inventory controls.</p>
+            <input type="password" x-model="inputPass" @keydown.enter="verifyAdmin()" placeholder="Enter PIN" 
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold tracking-widest focus:outline-none focus:border-emerald-600 mb-4">
+            <div class="flex justify-end gap-2">
+                <button @click="showAuthModal = false" class="px-4 py-2 text-gray-500 hover:text-gray-700">Cancel</button>
+                <button @click="verifyAdmin()" class="px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="isAdmin" class="bg-amber-500 text-black px-4 py-2 text-center text-sm font-bold flex justify-between items-center shadow-md">
+        <span>⚙️ OWNER MODE ACTIVE — You can edit prices, stock, and descriptions live below.</span>
+        <button @click="isAdmin = false" class="bg-black text-white px-3 py-1 rounded text-xs">Exit Admin</button>
+    </div>
+
+    <header class="py-12 px-4 text-center border-b border-emerald-100 bg-emerald-50/50">
+        <h1 class="font-cursive text-5xl md:text-7xl text-emerald-800 mb-2 drop-shadow-sm">
+            Zahara Natural Hair Palm Co.
+        </h1>
+        <p class="text-emerald-700 uppercase tracking-widest text-xs md:text-sm font-semibold">
+            100% Botanical Hair Care & Scalp Solutions
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <template x-for="(product, index) in products" :key="index">
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition border border-emerald-100/80 overflow-hidden flex flex-col justify-between relative">
+                    
+                    <div>
+                        <div class="p-6 pb-2 flex justify-between items-start">
+                            <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase bg-emerald-100/60 px-3 py-1 rounded-full" x-text="product.size"></span>
+                            
+                            <span :class="product.inStock ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'" 
+                                  class="text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm"
+                                  x-text="product.inStock ? 'In Stock' : 'Out of Stock'"></span>
+                        </div>
+
+                        <div class="px-6 py-2">
+                            <h2 class="text-2xl font-bold text-gray-900" x-text="product.name"></h2>
+                            <p class="text-sm text-gray-500 mt-1" x-text="product.subtitle"></p>
+                        </div>
+
+                        <div class="px-6 py-2 text-sm text-gray-600 space-y-2">
+                            <p x-text="product.description"></p>
+                            <p class="text-xs text-emerald-800 font-medium bg-emerald-50 p-2 rounded-lg border border-emerald-100" x-text="'Usage: ' + product.usage"></p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 border-t border-gray-100 mt-4 bg-gray-50/50">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Price</span>
+                            <span class="text-2xl font-extrabold text-emerald-900">
+                                KSh <span x-text="product.price"></span>
+                            </span>
+                        </div>
+
+                        <button :disabled="!product.inStock" 
+                                :class="product.inStock ? 'bg-emerald-800 hover:bg-emerald-900 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                                class="w-full py-3 rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
+                            <span x-text="product.inStock ? 'Order via WhatsApp' : 'Currently Unavailable'"></span>
+                        </button>
+
+                        <div x-show="isAdmin" class="mt-4 pt-4 border-t border-dashed border-amber-400 bg-amber-50 p-3 rounded-lg text-xs space-y-2">
+                            <div class="font-bold text-amber-900">Edit Product Specs:</div>
+                            <div class="flex items-center gap-2">
+                                <label class="w-16">Price:</label>
+                                <input type="number" x-model="product.price" class="border p-1 rounded w-full font-bold">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="w-16">Stock:</label>
+                                <button @click="product.inStock = !product.inStock" 
+                                        :class="product.inStock ? 'bg-emerald-700' : 'bg-red-700'"
+                                        class="text-white px-2 py-1 rounded w-full font-bold"
+                                        x-text="product.inStock ? 'Mark Out of Stock' : 'Mark In Stock'"></button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <footer class="py-8 text-center text-xs text-gray-500 border-t border-emerald-100">
+        <p>&copy; 2026 Zahara Natural Hair Palm Co. All Rights Reserved.</p>
+        <p class="mt-1">Nairobi, Kenya</p>
+    </footer>
+
+    <script>
+        function storeData() {
+            return {
+                isAdmin: false,
+                showAuthModal: false,
+                inputPass: '',
+                secretPIN: '1234', // <-- Change your password pin here
+
+                products: [
+                    {
+                        name: "Zahara Natural Oil Palm",
+                        subtitle: "Botanical Hair Growth Formula",
+                        size: "500 mg",
+                        price: 1500,
+                        inStock: true,
+                        description: "Complex herbal infusion designed to fortify hair roots, soothe scalp tension, and promote continuous hair shaft recovery.",
+                        usage: "Nightly scalp massage (3-5 mins gently with brush). Apply 3x weekly."
+                    },
+                    {
+                        name: "Zahara Natural Shampoo",
+                        subtitle: "Nourishing Gentle Cleanser",
+                        size: "500 ml",
+                        price: 1200,
+                        inStock: true,
+                        description: "Gentle lathering formula featuring castile bases, okra extracts, and glycerin to wash without stripping natural moisture.",
+                        usage: "Use 1-2 times weekly. Wash thoroughly from roots to tips."
+                    },
+                    {
+                        name: "Zahara Powder Hair Mask",
+                        subtitle: "Deep Conditioning Herbal Paste",
+                        size: "165 g",
+                        price: 1800,
+                        inStock: true,
+                        description: "Pure botanical herb powders (Rosmarinus, Henna, Sidr) formulated to revive hair fibers and condition itchy scalps.",
+                        usage: "Mix 2-3 tbsp with warm water to form paste. Cover hair for 2 hours."
+                    }
+                ],
+
+                toggleAdmin() {
+                    if (this.isAdmin) {
+                        this.isAdmin = false;
+                    } else {
+                        this.showAuthModal = true;
+                    }
+                },
+
+                verifyAdmin() {
+                    if (this.inputPass === this.secretPIN) {
+                        this.isAdmin = true;
+                        this.showAuthModal = false;
+                        this.inputPass = '';
+                    } else {
+                        alert("Incorrect PIN");
+                        this.inputPass = '';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
