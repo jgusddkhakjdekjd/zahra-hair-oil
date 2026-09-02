@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zahara Natural Hair Palm Co.</title>
+    <title>Zahara Natural Herbal Co.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,10 +18,34 @@
             font-family: 'Montserrat', sans-serif;
             background-color: #f4f8f5;
         }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="text-gray-800" x-data="storeData()">
 
+    <!-- Header Navigation & Cart Trigger -->
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md shadow-sm z-40 border-b border-emerald-100">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="font-cursive text-3xl md:text-4xl text-emerald-800 font-bold">
+                    Zahara herbal 
+                </h1>
+                <p class="text-[10px] md:text-xs text-emerald-700 uppercase tracking-widest font-semibold">
+                    100% Botanical Hair Care & Scalp Solutions
+                </p>
+            </div>
+
+            <!-- Cart Icon with Live Counter -->
+            <button @click="showCart = true" class="relative bg-emerald-100/70 hover:bg-emerald-200 text-emerald-900 p-3 rounded-full transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span x-show="cartTotalItems > 0" x-text="cartTotalItems" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md"></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Floating Trigger (Lock Icon) -->
     <div class="fixed bottom-4 right-4 z-50">
         <button @click="toggleAdmin()" 
                 class="bg-emerald-800 hover:bg-emerald-900 text-white p-3 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center">
@@ -31,10 +55,11 @@
         </button>
     </div>
 
-    <div x-show="showAuthModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4" x-cloak>
+    <!-- Admin PIN Authentication Modal -->
+    <div x-show="showAuthModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" x-cloak>
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
             <h3 class="text-xl font-bold text-emerald-900 mb-2">Owner Access</h3>
-            <p class="text-sm text-gray-600 mb-4">Enter passcode to unlock price & inventory controls.</p>
+            <p class="text-sm text-gray-600 mb-4">Enter passcode to unlock price, image & inventory controls.</p>
             <input type="password" x-model="inputPass" @keydown.enter="verifyAdmin()" placeholder="Enter PIN" 
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center font-bold tracking-widest focus:outline-none focus:border-emerald-600 mb-4">
             <div class="flex justify-end gap-2">
@@ -44,40 +69,46 @@
         </div>
     </div>
 
+    <!-- Admin Status Header Banner -->
     <div x-show="isAdmin" class="bg-amber-500 text-black px-4 py-2 text-center text-sm font-bold flex justify-between items-center shadow-md">
-        <span>⚙️ OWNER MODE ACTIVE — You can edit prices, stock, and descriptions live below.</span>
+        <span>⚙️ OWNER MODE ACTIVE — You can edit prices, stock, image URLs, and details live below.</span>
         <button @click="isAdmin = false" class="bg-black text-white px-3 py-1 rounded text-xs">Exit Admin</button>
     </div>
 
-    <header class="py-12 px-4 text-center border-b border-emerald-100 bg-emerald-50/50">
+    <!-- Hero Title Section -->
+    <section class="py-10 px-4 text-center bg-emerald-50/50 border-b border-emerald-100">
         <h1 class="font-cursive text-5xl md:text-7xl text-emerald-800 mb-2 drop-shadow-sm">
             Zahara Natural Hair Palm Co.
         </h1>
-        <p class="text-emerald-700 uppercase tracking-widest text-xs md:text-sm font-semibold">
-            100% Botanical Hair Care & Scalp Solutions
+        <p class="text-emerald-700 uppercase tracking-widest text-xs md:text-sm font-semibold max-w-xl mx-auto">
+            Pure Botanical Oils, Shampoos & Organic Hair Masks
         </p>
-    </header>
+    </section>
 
+    <!-- Main Products Section -->
     <main class="max-w-6xl mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <template x-for="(product, index) in products" :key="index">
                 <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition border border-emerald-100/80 overflow-hidden flex flex-col justify-between relative">
                     
                     <div>
-                        <div class="p-6 pb-2 flex justify-between items-start">
-                            <span class="text-xs font-bold tracking-wider text-emerald-700 uppercase bg-emerald-100/60 px-3 py-1 rounded-full" x-text="product.size"></span>
+                        <!-- Product Image Container -->
+                        <div class="relative h-56 bg-emerald-50 overflow-hidden border-b border-gray-100">
+                            <img :src="product.image" :alt="product.name" class="w-full h-full object-cover">
+                            
+                            <span class="absolute top-3 left-3 text-xs font-bold tracking-wider text-emerald-800 uppercase bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm" x-text="product.size"></span>
                             
                             <span :class="product.inStock ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'" 
-                                  class="text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm"
-                                  x-text="product.inStock ? 'In Stock' : 'Out of Stock'"></span>
+                                  class="absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm"
+                                  x-text="product.inStock ? 'In Stock' : 'Sold Out'"></span>
                         </div>
 
-                        <div class="px-6 py-2">
+                        <div class="px-6 py-4">
                             <h2 class="text-2xl font-bold text-gray-900" x-text="product.name"></h2>
-                            <p class="text-sm text-gray-500 mt-1" x-text="product.subtitle"></p>
+                            <p class="text-sm text-gray-500 mt-1 font-medium" x-text="product.subtitle"></p>
                         </div>
 
-                        <div class="px-6 py-2 text-sm text-gray-600 space-y-2">
+                        <div class="px-6 py-1 text-sm text-gray-600 space-y-2">
                             <p x-text="product.description"></p>
                             <p class="text-xs text-emerald-800 font-medium bg-emerald-50 p-2 rounded-lg border border-emerald-100" x-text="'Usage: ' + product.usage"></p>
                         </div>
@@ -87,28 +118,35 @@
                         <div class="flex justify-between items-center mb-4">
                             <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Price</span>
                             <span class="text-2xl font-extrabold text-emerald-900">
-                                KSh <span x-text="product.price"></span>
+                                $<span x-text="product.price.toFixed(2)"></span> <span class="text-xs text-gray-400 font-normal">USD</span>
                             </span>
                         </div>
 
-                        <button :disabled="!product.inStock" 
+                        <!-- Add to Cart Button -->
+                        <button @click="addToCart(product)" 
+                                :disabled="!product.inStock" 
                                 :class="product.inStock ? 'bg-emerald-800 hover:bg-emerald-900 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                                 class="w-full py-3 rounded-xl font-bold shadow transition flex items-center justify-center gap-2">
-                            <span x-text="product.inStock ? 'Order via WhatsApp' : 'Currently Unavailable'"></span>
+                            <span x-text="product.inStock ? 'Add to Cart' : 'Currently Unavailable'"></span>
                         </button>
 
+                        <!-- Admin Panel inside Cards -->
                         <div x-show="isAdmin" class="mt-4 pt-4 border-t border-dashed border-amber-400 bg-amber-50 p-3 rounded-lg text-xs space-y-2">
                             <div class="font-bold text-amber-900">Edit Product Specs:</div>
                             <div class="flex items-center gap-2">
-                                <label class="w-16">Price:</label>
-                                <input type="number" x-model="product.price" class="border p-1 rounded w-full font-bold">
+                                <label class="w-20 font-semibold">Price ($):</label>
+                                <input type="number" step="0.01" x-model.number="product.price" class="border p-1 rounded w-full font-bold">
                             </div>
                             <div class="flex items-center gap-2">
-                                <label class="w-16">Stock:</label>
+                                <label class="w-20 font-semibold">Image URL:</label>
+                                <input type="text" x-model="product.image" class="border p-1 rounded w-full text-xs">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label class="w-20 font-semibold">Stock Status:</label>
                                 <button @click="product.inStock = !product.inStock" 
                                         :class="product.inStock ? 'bg-emerald-700' : 'bg-red-700'"
                                         class="text-white px-2 py-1 rounded w-full font-bold"
-                                        x-text="product.inStock ? 'Mark Out of Stock' : 'Mark In Stock'"></button>
+                                        x-text="product.inStock ? 'Mark as Sold Out' : 'Mark In Stock'"></button>
                             </div>
                         </div>
 
@@ -118,9 +156,83 @@
         </div>
     </main>
 
-    <footer class="py-8 text-center text-xs text-gray-500 border-t border-emerald-100">
-        <p>&copy; 2026 Zahara Natural Hair Palm Co. All Rights Reserved.</p>
-        <p class="mt-1">Nairobi, Kenya</p>
+    <!-- Shopping Cart Slide-over Drawer -->
+    <div x-show="showCart" class="fixed inset-0 z-50 overflow-hidden" x-cloak>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showCart = false"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col justify-between">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 bg-emerald-900 text-white flex justify-between items-center">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <span>Your Shopping Basket</span>
+                        <span class="bg-emerald-700 text-xs px-2 py-0.5 rounded-full" x-text="cartTotalItems"></span>
+                    </h2>
+                    <button @click="showCart = false" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+                </div>
+
+                <!-- Drawer Cart Items list -->
+                <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                    <template x-if="cart.length === 0">
+                        <div class="text-center py-12 text-gray-400">
+                            <p class="text-4xl mb-2">🛍️</p>
+                            <p class="text-sm">Your basket is empty right now.</p>
+                        </div>
+                    </template>
+
+                    <template x-for="(item, idx) in cart" :key="idx">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                            <div class="flex items-center gap-3">
+                                <img :src="item.image" class="w-12 h-12 object-cover rounded-lg border">
+                                <div>
+                                    <h4 class="font-bold text-sm text-gray-800" x-text="item.name"></h4>
+                                    <p class="text-xs text-gray-500">$<span x-text="item.price.toFixed(2)"></span> each</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <button @click="decreaseQty(idx)" class="w-6 h-6 bg-gray-200 rounded font-bold text-gray-700 flex items-center justify-center">-</button>
+                                <span class="text-sm font-bold w-4 text-center" x-text="item.qty"></span>
+                                <button @click="increaseQty(idx)" class="w-6 h-6 bg-gray-200 rounded font-bold text-gray-700 flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Delivery Information Form -->
+                    <div x-show="cart.length > 0" class="pt-4 border-t border-gray-100">
+                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Shipping Details</h4>
+                        <div class="space-y-2">
+                            <input type="text" x-model="customer.name" placeholder="Full Name *" class="w-full text-xs p-2.5 border rounded-lg focus:outline-none focus:border-emerald-600">
+                            <input type="tel" x-model="customer.phone" placeholder="Phone Number (with Country Code) *" class="w-full text-xs p-2.5 border rounded-lg focus:outline-none focus:border-emerald-600">
+                            <textarea x-model="customer.address" placeholder="Shipping Address / Country *" class="w-full text-xs p-2.5 border rounded-lg focus:outline-none focus:border-emerald-600" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drawer Total & Action Button -->
+                <div class="p-6 bg-gray-50 border-t border-gray-100 space-y-3">
+                    <div class="flex justify-between items-center text-lg font-extrabold text-gray-900">
+                        <span>Total:</span>
+                        <span class="text-emerald-900">$<span x-text="cartTotalPrice.toFixed(2)"></span> USD</span>
+                    </div>
+
+                    <!-- Direct WhatsApp Order Button -->
+                    <button @click="checkoutWhatsApp()" 
+                            :disabled="cart.length === 0"
+                            :class="cart.length > 0 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'"
+                            class="w-full py-3.5 text-white rounded-xl font-bold shadow text-sm transition flex items-center justify-center gap-2">
+                        <span>Order Now & Send to WhatsApp 💬</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-8 text-center text-xs text-gray-500 border-t border-emerald-100 bg-white">
+        <p>&copy; 2026 Zahara Natural herbal Co. All Rights Reserved.</p>
+        <p class="mt-1">Nairobi, Kenya • WhatsApp: +254711404569</p>
     </footer>
 
     <script>
@@ -128,16 +240,27 @@
             return {
                 isAdmin: false,
                 showAuthModal: false,
+                showCart: false,
                 inputPass: '',
-                secretPIN: '1234', // <-- Change your password pin here
+                secretPIN: '1234',
+                whatsappNumber: '254711404569',
+
+                customer: {
+                    name: '',
+                    phone: '',
+                    address: ''
+                },
+
+                cart: [],
 
                 products: [
                     {
-                        name: "Zahara Natural Oil Palm",
+                        name: "Zahara Natural Oil",
                         subtitle: "Botanical Hair Growth Formula",
                         size: "500 mg",
-                        price: 1500,
+                        price: 15.00,
                         inStock: true,
+                        image: "https://images.unsplash.com/photo-1608248597261-e4d091a0f9b6?auto=format&fit=crop&q=80&w=600",
                         description: "Complex herbal infusion designed to fortify hair roots, soothe scalp tension, and promote continuous hair shaft recovery.",
                         usage: "Nightly scalp massage (3-5 mins gently with brush). Apply 3x weekly."
                     },
@@ -145,21 +268,82 @@
                         name: "Zahara Natural Shampoo",
                         subtitle: "Nourishing Gentle Cleanser",
                         size: "500 ml",
-                        price: 1200,
+                        price: 12.00,
                         inStock: true,
-                        description: "Gentle lathering formula featuring castile bases, okra extracts, and glycerin to wash without stripping natural moisture.",
+                        image: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=600",
+                        description: "Gentle lathering formula featuring castile bases, herbal extracts, and glycerin to wash without stripping natural moisture.",
                         usage: "Use 1-2 times weekly. Wash thoroughly from roots to tips."
                     },
                     {
                         name: "Zahara Powder Hair Mask",
                         subtitle: "Deep Conditioning Herbal Paste",
                         size: "165 g",
-                        price: 1800,
+                        price: 18.00,
                         inStock: true,
+                        image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=600",
                         description: "Pure botanical herb powders (Rosmarinus, Henna, Sidr) formulated to revive hair fibers and condition itchy scalps.",
                         usage: "Mix 2-3 tbsp with warm water to form paste. Cover hair for 2 hours."
                     }
                 ],
+
+                get cartTotalItems() {
+                    return this.cart.reduce((total, item) => total + item.qty, 0);
+                },
+
+                get cartTotalPrice() {
+                    return this.cart.reduce((total, item) => total + (item.price * item.qty), 0);
+                },
+
+                addToCart(product) {
+                    const existing = this.cart.find(i => i.name === product.name);
+                    if (existing) {
+                        existing.qty++;
+                    } else {
+                        this.cart.push({
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            qty: 1
+                        });
+                    }
+                    this.showCart = true;
+                },
+
+                increaseQty(index) {
+                    this.cart[index].qty++;
+                },
+
+                decreaseQty(index) {
+                    if (this.cart[index].qty > 1) {
+                        this.cart[index].qty--;
+                    } else {
+                        this.cart.splice(index, 1);
+                    }
+                },
+
+                checkoutWhatsApp() {
+                    if (!this.customer.name.trim() || !this.customer.phone.trim() || !this.customer.address.trim()) {
+                        alert("Please fill in your Name, Phone Number, and Shipping Address before ordering.");
+                        return;
+                    }
+
+                    let message = `🛒 *NEW ORDER - Zahara Natural*\n\n`;
+                    
+                    message += `👤 *Customer Details:*\n`;
+                    message += `• Name: ${this.customer.name}\n`;
+                    message += `• Phone: ${this.customer.phone}\n`;
+                    message += `• Address: ${this.customer.address}\n\n`;
+
+                    message += `📦 *Order Summary:*\n`;
+                    this.cart.forEach(item => {
+                        message += `• ${item.name} (x${item.qty}) - $${(item.price * item.qty).toFixed(2)} USD\n`;
+                    });
+
+                    message += `\n💵 *Total Amount: $${this.cartTotalPrice.toFixed(2)} USD*`;
+
+                    const encoded = encodeURIComponent(message);
+                    window.open(`https://wa.me/${this.whatsappNumber}?text=${encoded}`, '_blank');
+                },
 
                 toggleAdmin() {
                     if (this.isAdmin) {
